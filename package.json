@@ -1,0 +1,1 @@
+{ "name":"play-reviews-cli","version":"1.0.0","type":"module","bin":{"play-reviews":"play-reviews.mjs"},"license":"MIT","description":"Fetch Google Play Store reviews for any app from the command line, no API key.","keywords":["google-play","reviews","android","cli","aso"] }
