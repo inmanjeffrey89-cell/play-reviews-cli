@@ -1,1 +1,33 @@
-{ "name":"play-reviews-cli","version":"1.0.0","type":"module","bin":{"play-reviews":"play-reviews.mjs"},"license":"MIT","description":"Fetch Google Play Store reviews for any app from the command line, no API key.","keywords":["google-play","reviews","android","cli","aso"] }
+{
+  "name": "play-reviews-cli",
+  "version": "2.0.0",
+  "description": "Fetch Google Play Store reviews for any app from the command line, no API key.",
+  "type": "module",
+  "bin": {
+    "play-reviews": "play-reviews.mjs"
+  },
+  "files": [
+    "play-reviews.mjs",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inmanjeffrey89-cell/play-reviews-cli.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "google-play",
+    "reviews",
+    "android",
+    "cli",
+    "aso"
+  ]
+}

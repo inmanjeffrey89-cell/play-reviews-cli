@@ -6,8 +6,17 @@ export function parsePackage(input) {
   if (!input) return null;
   const s = String(input).trim();
   if (PKG_RE.test(s)) return s;
-  const m = s.match(/[?&]id=([a-zA-Z0-9._]+)/);
-  return m && PKG_RE.test(m[1]) ? m[1] : null;
+  // Take the whole id= value and validate it, so "id=com.app-beta" is rejected, never truncated.
+  const m = s.match(/[?&]id=([^&#]*)/);
+  return m && PKG_RE.test(decodeURIComponent(m[1])) ? decodeURIComponent(m[1]) : null;
+}
+
+// hl= / gl= from a Play URL, so a German store link fetches German reviews.
+export function parseLocale(input) {
+  const s = String(input ?? '');
+  const hl = s.match(/[?&]hl=([a-zA-Z]{2,3}(?:[-_][a-zA-Z]{2,4})?)(?:[&#]|$)/)?.[1] ?? null;
+  const gl = s.match(/[?&]gl=([a-zA-Z]{2})(?:[&#]|$)/)?.[1] ?? null;
+  return { lang: hl ? hl.replace('_', '-') : null, country: gl ? gl.toLowerCase() : null };
 }
 
 export function sortCode(name) {
@@ -18,6 +27,20 @@ export function buildBody(appId, count, sort, token = null) {
   const inner = [null, null, [2, sort, [count, null, token], null, []], [appId, 7]];
   const freq = [[['UsvDTd', JSON.stringify(inner), null, 'generic']]];
   return 'f.req=' + encodeURIComponent(JSON.stringify(freq));
+}
+
+// Classify a batchexecute body: { kind: 'ok', payload } | { kind: 'rpc-error', status } |
+// { kind: 'malformed' }. A missing package is 'ok' with an empty payload; a rejected request or
+// continuation token comes back as a null payload plus a status array.
+export function readEnvelope(raw) {
+  const line = String(raw).split('\n').find((l) => l.includes('"UsvDTd"'));
+  if (!line) return { kind: 'malformed' };
+  let env;
+  try { env = JSON.parse(line); } catch { return { kind: 'malformed' }; }
+  const slot = env?.[0];
+  if (!Array.isArray(slot)) return { kind: 'malformed' };
+  if (slot[2] == null) return slot[5] ? { kind: 'rpc-error', status: slot[5] } : { kind: 'malformed' };
+  try { return { kind: 'ok', payload: JSON.parse(slot[2]) }; } catch { return { kind: 'malformed' }; }
 }
 
 export function stripEnvelope(raw) {
@@ -33,6 +56,10 @@ export function stripEnvelope(raw) {
 export function parseReviews(raw) {
   let payload;
   try { payload = stripEnvelope(raw); } catch { return []; }
+  return parsePayloadReviews(payload);
+}
+
+export function parsePayloadReviews(payload) {
   if (!payload) return [];
   const reviews = payload[0];
   if (!Array.isArray(reviews)) return [];
