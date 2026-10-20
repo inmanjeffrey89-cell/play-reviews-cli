@@ -1,6 +1,6 @@
 {
   "name": "play-reviews-cli",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Fetch Google Play Store reviews for any app from the command line, no API key.",
   "type": "module",
   "bin": {
@@ -23,6 +23,15 @@
     "url": "git+https://github.com/inmanjeffrey89-cell/play-reviews-cli.git"
   },
   "license": "MIT",
+  "author": {
+    "name": "Jeffrey Inman",
+    "email": "jeff.helpsupport@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/inmanjeffrey89-cell/play-reviews-cli/issues",
+    "email": "jeff.helpsupport@gmail.com"
+  },
+  "homepage": "https://github.com/inmanjeffrey89-cell/play-reviews-cli#readme",
   "keywords": [
     "google-play",
     "reviews",
